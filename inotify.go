@@ -96,7 +96,7 @@ func (w *Watcher) Add(name string) error {
 
 	const agnosticEvents = unix.IN_MOVED_TO | unix.IN_MOVED_FROM |
 		unix.IN_CREATE | unix.IN_ATTRIB | unix.IN_MODIFY |
-		unix.IN_MOVE_SELF | unix.IN_DELETE | unix.IN_DELETE_SELF
+		unix.IN_MOVE_SELF | unix.IN_DELETE | unix.IN_DELETE_SELF | unix.IN_OPEN
 
 	var flags uint32 = agnosticEvents
 
@@ -320,6 +320,9 @@ func newEvent(name string, mask uint32) Event {
 	e := Event{Name: name}
 	if mask&unix.IN_CREATE == unix.IN_CREATE || mask&unix.IN_MOVED_TO == unix.IN_MOVED_TO {
 		e.Op |= Create
+	}
+	if mask&unix.IN_OPEN == unix.IN_OPEN {
+		e.Op |= Open
 	}
 	if mask&unix.IN_DELETE_SELF == unix.IN_DELETE_SELF || mask&unix.IN_DELETE == unix.IN_DELETE {
 		e.Op |= Remove
